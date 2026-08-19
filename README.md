@@ -50,20 +50,26 @@ Sistem Informasi Manajemen Aset IT berbasis web yang dirancang untuk mengelola i
 
 
 
-
-
 Buat Virtual Environment (Opsional tapi disarankan):
-   python -m venv venv
+
+Bash
+python -m venv venv
 # Mengaktifkan venv:
 # Windows:
 venv\Scripts\activate
 # macOS/Linux:
 source venv/bin/activate
-
-
 Install Dependensi/Pustaka Python:
+
+Bash
 pip install -r requirements.txt
-
-
 Jalankan Aplikasi:
-python app.py# it-asset-management-system
+
+Bash
+python app.py
+Akses via Browser:
+Buka http://127.0.0.1:5000
+
+Username Default: admin
+
+Password Default: admin123
