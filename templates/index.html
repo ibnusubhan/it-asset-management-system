@@ -95,60 +95,125 @@
     </div>
 </div>
 
-<!-- Tabel Inventaris -->
+<!-- TABEL DAFTAR ASET -->
 <div class="card shadow-sm">
-    <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
-        <span>Daftar Aset {% if selected_status %}(Filter: {{ selected_status }}){% endif %}</span>
-        {% if selected_status %}
-            <a href="/" class="btn btn-outline-secondary btn-sm">Tampilkan Semua</a>
-        {% endif %}
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold">Daftar Aset</h5>
     </div>
     <div class="card-body p-0">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>Tag Aset</th>
-                    <th>Nama</th>
-                    <th>Kategori</th>
-                    <th>Status</th>
-                    <th>Pengguna</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for asset in assets %}
-                <tr>
-                    <td><strong>{{ asset.asset_tag }}</strong></td>
-                    <td>{{ asset.name }}</td>
-                    <td><span class="badge bg-secondary">{{ asset.category }}</span></td>
-                    <td>
-                        {% if asset.status == 'In Use' %}
-                            <span class="badge bg-success">In Use</span>
-                        {% elif asset.status == 'Available' %}
-                            <span class="badge bg-info">Available</span>
-                        {% elif asset.status == 'Repair' %}
-                            <span class="badge bg-warning text-dark">Repair</span>
-                        {% else %}
-                            <span class="badge bg-danger">Retired</span>
-                        {% endif %}
-                    </td>
-                    
-                    <td>{{ asset.user_name or '-' }}</td>
-                 <td class="text-nowrap">
-    <a href="/asset/{{ asset.id }}" class="btn btn-info btn-sm text-white">QR Code</a>
-    <a href="/edit/{{ asset.id }}" class="btn btn-warning btn-sm">Edit</a>
-    <a href="/delete/{{ asset.id }}" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus aset ini?')">Hapus</a>
-</td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="6" class="text-center py-4 text-muted">
-                        Belum ada data aset {% if selected_status %}dengan status "{{ selected_status }}"{% endif %}.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tag Aset</th>
+                        <th>Nama</th>
+                        <th>Kategori</th>
+                        <th>Status</th>
+                        <th>Pengguna</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for asset in assets %}
+                    <tr>
+                        <td class="fw-bold">{{ asset.asset_tag }}</td>
+                        <td>{{ asset.name }}</td>
+                        <td><span class="badge bg-secondary">{{ asset.category }}</span></td>
+                        <td>
+                            {% if asset.status == 'In Use' %}
+                                <span class="badge bg-success">In Use</span>
+                            {% elif asset.status == 'Available' %}
+                                <span class="badge bg-info text-white">Available</span>
+                            {% elif asset.status == 'Repair' %}
+                                <span class="badge bg-warning text-dark">Repair</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ asset.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ asset.user_name or '-' }}</td>
+                        <td class="text-center">
+                            <!-- TOMBOL DETAIL BARU (BIRU TUA) -->
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#detailModal{{ asset.id }}">
+                                🔍 Detail
+                            </button>
+                            <!-- TOMBOL QR CODE (BIRU MUDA) -->
+                            <a href="{{ url_for('asset_detail', id=asset.id) }}" class="btn btn-sm btn-info text-white">QR Code</a>
+                            <!-- TOMBOL EDIT (KUNING) -->
+                            <a href="{{ url_for('edit_asset', id=asset.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            <!-- TOMBOL HAPUS (MERAH) -->
+                            <a href="{{ url_for('delete_asset', id=asset.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus aset ini?')">Hapus</a>
+                        </td>
+                    </tr>
+
+                    <!-- MODAL POPUP DETAIL LENGKAP ASET -->
+                    <div class="modal fade" id="detailModal{{ asset.id }}" tabindex="-1" aria-labelledby="detailModalLabel{{ asset.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title fw-bold" id="detailModalLabel{{ asset.id }}">
+                                        🖥️ Detail Aset: {{ asset.asset_tag }} - {{ asset.name }}
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row g-3">
+                                        <!-- Ringkasan Utama -->
+                                        <div class="col-md-6">
+                                            <div class="p-3 bg-light rounded border">
+                                                <h6 class="fw-bold text-primary mb-3">📌 Informasi Umum</h6>
+                                                <p class="mb-2"><strong>Tag Aset:</strong> <span class="badge bg-dark">{{ asset.asset_tag }}</span></p>
+                                                <p class="mb-2"><strong>Nama Perangkat:</strong> {{ asset.name }}</p>
+                                                <p class="mb-2"><strong>Kategori:</strong> {{ asset.category }}</p>
+                                                <p class="mb-2"><strong>Serial Number (S/N):</strong> <code>{{ asset.serial_number or '-' }}</code></p>
+                                                <p class="mb-2"><strong>Status:</strong> {{ asset.status }}</p>
+                                                <p class="mb-0"><strong>Pengguna Saat Ini:</strong> {{ asset.user_name or 'Belum Diserahkan (Stock)' }}</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Informasi Pembelian & Garansi -->
+                                        <div class="col-md-6">
+                                            <div class="p-3 bg-light rounded border">
+                                                <h6 class="fw-bold text-primary mb-3">🛒 Pembelian & Garansi</h6>
+                                                <p class="mb-2"><strong>Nomor PO:</strong> {{ asset.po_number or '-' }}</p>
+                                                <p class="mb-2"><strong>Tanggal Beli:</strong> {{ asset.purchase_date or '-' }}</p>
+                                                <p class="mb-0"><strong>Garansi Berakhir:</strong> {{ asset.warranty_expiry or '-' }}</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Spesifikasi Perangkat -->
+                                        <div class="col-md-12">
+                                            <div class="p-3 bg-light rounded border">
+                                                <h6 class="fw-bold text-primary mb-3">⚙️ Spesifikasi & Software</h6>
+                                                <div class="row">
+                                                    <div class="col-md-10"><p class="mb-2"><strong>Processor:</strong> {{ asset.processor or '-' }}</p></div>
+                                                    <div class="col-md-10"><p class="mb-2"><strong>RAM:</strong> {{ asset.ram or '-' }}</p></div>
+                                                    <div class="col-md-10"><p class="mb-2"><strong>Storage:</strong> {{ asset.storage or '-' }}</p></div>
+                                                    <div class="col-md-10"><p class="mb-2"><strong>Sistem Operasi (OS):</strong> {{ asset.os or '-' }}</p></div>
+                                                    <div class="col-md-10"><p class="mb-2"><strong>Microsoft Office:</strong> {{ asset.office or '-' }}</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Catatan / Notes -->
+                                        <div class="col-md-12">
+                                            <div class="p-3 bg-light rounded border">
+                                                <h6 class="fw-bold text-primary mb-2">📝 Catatan Tambahan</h6>
+                                                <p class="mb-0 text-muted">{{ asset.notes or 'Tidak ada catatan.' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{{ url_for('edit_asset', id=asset.id) }}" class="btn btn-warning btn-sm">Edit Aset Ini</a>
+                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -23,9 +23,16 @@
                     <select name="category" class="form-select" required>
                         <option value="Laptop" {% if asset.category == 'Laptop' %}selected{% endif %}>Laptop</option>
                         <option value="Desktop PC" {% if asset.category == 'Desktop PC' %}selected{% endif %}>Desktop PC</option>
+                        <option value="Mini PC" {% if asset.category == 'Mini PC' %}selected{% endif %}>Mini PC</option>
+                        <option value="Tablet" {% if asset.category == 'Tablet' %}selected{% endif %}>Tablet</option>
                         <option value="Monitor" {% if asset.category == 'Monitor' %}selected{% endif %}>Monitor</option>
-                        <option value="Printer/Scanner" {% if asset.category == 'Printer/Scanner' %}selected{% endif %}>Printer/Scanner</option>
-                        <option value="Network Hardware" {% if asset.category == 'Network Hardware' %}selected{% endif %}>Network Hardware</option>
+                        <option value="Printer" {% if asset.category == 'Printer' %}selected{% endif %}>Printer</option>
+                        <option value="Scaner Barcode" {% if asset.category == 'Scaner Barcode' %}selected{% endif %}>Scaner Barcode</option>
+                        <option value="Scanner" {% if asset.category == 'Scanner' %}selected{% endif %}>Scanner</option>
+                        <option value="Mouse" {% if asset.category == 'Mouse' %}selected{% endif %}>Mouse</option>
+                        <option value="Keyboard" {% if asset.category == 'Keyboard' %}selected{% endif %}>Keyboard</option>
+                        <option value="Kabel" {% if asset.category == 'Kabel' %}selected{% endif %}>Kabel</option>
+                        <option value="Hadware Jaringan" {% if asset.category == 'Hadware Jaringan' %}selected{% endif %}>Hadware Jaringan</option>
                     </select>
                 </div>
                 <div class="col-md-6">

@@ -45,7 +45,7 @@ Sistem Informasi Manajemen Aset IT berbasis web yang dirancang untuk mengelola i
 
 1. **Clone Repositori ini:**
    ```bash
-   git clone [https://github.com/USERNAME_KAMU/it-asset-management.git](https://github.com/USERNAME_KAMU/it-asset-management.git)
+   git clone [https://github.com/ibnusubhan/it-asset-management-system.git](https://github.com/ibnusubhan/it-asset-management-system.git)
    cd it-asset-management
 
 
