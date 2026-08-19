@@ -1,111 +1,115 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<!-- HEADER DASHBOARD RESPONSIVE -->
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
     <div>
-        <h2 class="mb-0">Dashboard Aset IT</h2>
+        <h2 class="mb-0 fw-bold fs-3">Dashboard Aset IT</h2>
         {% if selected_status %}
-            <small class="text-muted">Menampilkan filter: <strong>{{ selected_status }}</strong> (<a href="/" class="text-decoration-none">Reset Filter</a>)</small>
+            <small class="text-muted d-block mt-1">Status Filter: <strong>{{ selected_status }}</strong> (<a href="/" class="text-decoration-none">Reset</a>)</small>
         {% endif %}
     </div>
-    <div>
-        <a href="/export/excel" class="btn btn-success btn-sm me-2">📊 Ekspor Excel</a>
-        <a href="/add" class="btn btn-primary btn-sm">+ Tambah Aset</a>
-    </div>
+  
 </div>
 
-<!-- Kartu Ringkasan Interaktif (Dapat Diklik) -->
-<div class="row mb-4">
-    <!-- Kartu Total Aset -->
-  <!-- Card Total Aset dengan Link Detail Kategori -->
-<div class="col-md-3">
-    <div class="card bg-primary text-white shadow-sm position-relative">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h6 class="card-title mb-1 text-white-50">Total Aset</h6>
-                    <h2 class="fw-bold mb-0">{{ total }}</h2>
+<!-- KARTU RINGKASAN STATISTIK -->
+<div class="row g-3 mb-4">
+    <!-- Total Aset -->
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card bg-primary text-white shadow-sm border-0 h-100">
+            <div class="card-body p-3 d-flex flex-column justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-white-50 d-block">Total Aset</small>
+                        <h2 class="fw-bold mb-0 mt-1">{{ total }}</h2>
+                    </div>
+                    <div class="fs-1 opacity-25">📦</div>
                 </div>
-                <div class="fs-1 opacity-25">📦</div>
+                <hr class="my-2 opacity-25">
+                <a href="#" class="text-white text-decoration-none small fw-semibold" data-bs-toggle="modal" data-bs-target="#categoryModal">
+                    🔍 Lihat Detail Kategori &raquo;
+                </a>
             </div>
-            <hr class="my-2 opacity-25">
-            <!-- TULISAN KECIL UNTUK KLIK DETAIL -->
-            <a href="#" class="text-white text-decoration-none small fw-semibold" data-bs-toggle="modal" data-bs-target="#categoryModal">
-                🔍 Lihat Detail Per Kategori &raquo;
-            </a>
         </div>
     </div>
-</div>
 
-<!-- POP-UP DIALOG DETAIL PER KATEGORI -->
-<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-dark">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title fw-bold" id="categoryModalLabel">📊 Rincian Total Aset per Kategori</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <ul class="list-group list-group-flush">
-                    {% for cat, count in category_counts.items() %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-2 py-2">
-                        <span class="fw-semibold text-secondary">💻 {{ cat }}</span>
-                        <span class="badge bg-primary rounded-pill fs-6">{{ count }} Unit</span>
-                    </li>
-                    {% else %}
-                    <li class="list-group-item text-center text-muted">Belum ada data aset</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div class="modal-footer py-2">
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
-            </div>
-        </div>
-    </div>
-</div>
-    
-    <!-- Kartu In Use -->
-    <div class="col-md-3">
+    <!-- In Use -->
+    <div class="col-12 col-sm-6 col-lg-3">
         <a href="/?status=In Use" class="text-decoration-none">
-            <div class="card bg-success text-white p-3 shadow-sm card-hover {% if selected_status == 'In Use' %}border border-3 border-dark{% endif %}" style="cursor: pointer;">
-                <h6>In Use</h6>
-                <h3 class="mb-0">{{ in_use }}</h3>
+            <div class="card bg-success text-white shadow-sm border-0 h-100 p-3">
+                <small class="text-white-50 d-block">In Use</small>
+                <h2 class="fw-bold mb-0 mt-1">{{ in_use }}</h2>
             </div>
         </a>
     </div>
 
-    <!-- Kartu Available -->
-    <div class="col-md-3">
+    <!-- Available -->
+    <div class="col-12 col-sm-6 col-lg-3">
         <a href="/?status=Available" class="text-decoration-none">
-            <div class="card bg-info text-white p-3 shadow-sm card-hover {% if selected_status == 'Available' %}border border-3 border-dark{% endif %}" style="cursor: pointer;">
-                <h6>Available</h6>
-                <h3 class="mb-0">{{ available }}</h3>
+            <div class="card bg-info text-white shadow-sm border-0 h-100 p-3">
+                <small class="text-white-50 d-block">Available</small>
+                <h2 class="fw-bold mb-0 mt-1">{{ available }}</h2>
             </div>
         </a>
     </div>
 
-    <!-- Kartu Repair -->
-    <div class="col-md-3">
+    <!-- Repair -->
+    <div class="col-12 col-sm-6 col-lg-3">
         <a href="/?status=Repair" class="text-decoration-none">
-            <div class="card bg-warning text-dark p-3 shadow-sm card-hover {% if selected_status == 'Repair' %}border border-3 border-dark{% endif %}" style="cursor: pointer;">
-                <h6>Repair</h6>
-                <h3 class="mb-0">{{ repair }}</h3>
+            <div class="card bg-warning text-dark shadow-sm border-0 h-100 p-3">
+                <small class="text-dark-50 d-block">Repair</small>
+                <h2 class="fw-bold mb-0 mt-1">{{ repair }}</h2>
             </div>
         </a>
     </div>
 </div>
 
-<!-- TABEL DAFTAR ASET -->
-<div class="card shadow-sm">
-    <div class="card-header bg-white py-3">
+<!-- TABEL DAFTAR ASET & FILTER -->
+<div class="card shadow-sm border-0">
+    <!-- HEADER KARTU: Judul di Kiri, Tombol Aksi di Pojok Kanan -->
+    <div class="card-header bg-white py-3 border-bottom d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
         <h5 class="mb-0 fw-bold">Daftar Aset</h5>
+        <div class="d-flex gap-2">
+            <a href="/export/excel" class="btn btn-success btn-sm">📊 Ekspor Excel</a>
+            <a href="/add" class="btn btn-primary btn-sm">+ Tambah Aset</a>
+        </div>
     </div>
+    
+    <!-- PENCARIAN & FILTER -->
+    <div class="p-3 bg-light border-bottom">
+        <div class="row g-2">
+            <div class="col-12 col-md-5">
+                <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="🔍 Cari tag, nama, pengguna..." onkeyup="filterTable()">
+            </div>
+            <div class="col-6 col-md-3">
+                <select id="categoryFilter" class="form-select form-select-sm" onchange="filterTable()">
+                    <option value="">Semua Kategori</option>
+                    {% for cat in category_counts.keys() %}
+                        <option value="{{ cat }}">{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-6 col-md-3">
+                <select id="statusFilter" class="form-select form-select-sm" onchange="filterTable()">
+                    <option value="">Semua Status</option>
+                    <option value="In Use">In Use</option>
+                    <option value="Available">Available</option>
+                    <option value="Repair">Repair</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-1">
+                <button type="button" class="btn btn-sm btn-outline-secondary w-100" onclick="resetFilters()">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABEL MURNI (TANPA MODAL DI DALAMNYA) -->
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 text-nowrap">
                 <thead class="table-light">
                     <tr>
-                        <th>Tag Aset</th>
+                        <th class="ps-3">Tag Aset</th>
                         <th>Nama</th>
                         <th>Kategori</th>
                         <th>Status</th>
@@ -116,7 +120,7 @@
                 <tbody>
                     {% for asset in assets %}
                     <tr>
-                        <td class="fw-bold">{{ asset.asset_tag }}</td>
+                        <td class="ps-3 fw-bold">{{ asset.asset_tag }}</td>
                         <td>{{ asset.name }}</td>
                         <td><span class="badge bg-secondary">{{ asset.category }}</span></td>
                         <td>
@@ -124,96 +128,148 @@
                                 <span class="badge bg-success">In Use</span>
                             {% elif asset.status == 'Available' %}
                                 <span class="badge bg-info text-white">Available</span>
-                            {% elif asset.status == 'Repair' %}
-                                <span class="badge bg-warning text-dark">Repair</span>
                             {% else %}
-                                <span class="badge bg-secondary">{{ asset.status }}</span>
+                                <span class="badge bg-warning text-dark">{{ asset.status }}</span>
                             {% endif %}
                         </td>
                         <td>{{ asset.user_name or '-' }}</td>
-                        <td class="text-center">
-                            <!-- TOMBOL DETAIL BARU (BIRU TUA) -->
-                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#detailModal{{ asset.id }}">
-                                🔍 Detail
-                            </button>
-                            <!-- TOMBOL QR CODE (BIRU MUDA) -->
+                        <td class="text-center py-2">
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#detailModal{{ asset.id }}">🔍 Detail</button>
                             <a href="{{ url_for('asset_detail', id=asset.id) }}" class="btn btn-sm btn-info text-white">QR Code</a>
-                            <!-- TOMBOL EDIT (KUNING) -->
                             <a href="{{ url_for('edit_asset', id=asset.id) }}" class="btn btn-sm btn-warning">Edit</a>
-                            <!-- TOMBOL HAPUS (MERAH) -->
-                            <a href="{{ url_for('delete_asset', id=asset.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus aset ini?')">Hapus</a>
+                            <a href="{{ url_for('delete_asset', id=asset.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Hapus aset ini?')">Hapus</a>
                         </td>
                     </tr>
-
-                    <!-- MODAL POPUP DETAIL LENGKAP ASET -->
-                    <div class="modal fade" id="detailModal{{ asset.id }}" tabindex="-1" aria-labelledby="detailModalLabel{{ asset.id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-lg modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header bg-primary text-white">
-                                    <h5 class="modal-title fw-bold" id="detailModalLabel{{ asset.id }}">
-                                        🖥️ Detail Aset: {{ asset.asset_tag }} - {{ asset.name }}
-                                    </h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row g-3">
-                                        <!-- Ringkasan Utama -->
-                                        <div class="col-md-6">
-                                            <div class="p-3 bg-light rounded border">
-                                                <h6 class="fw-bold text-primary mb-3">📌 Informasi Umum</h6>
-                                                <p class="mb-2"><strong>Tag Aset:</strong> <span class="badge bg-dark">{{ asset.asset_tag }}</span></p>
-                                                <p class="mb-2"><strong>Nama Perangkat:</strong> {{ asset.name }}</p>
-                                                <p class="mb-2"><strong>Kategori:</strong> {{ asset.category }}</p>
-                                                <p class="mb-2"><strong>Serial Number (S/N):</strong> <code>{{ asset.serial_number or '-' }}</code></p>
-                                                <p class="mb-2"><strong>Status:</strong> {{ asset.status }}</p>
-                                                <p class="mb-0"><strong>Pengguna Saat Ini:</strong> {{ asset.user_name or 'Belum Diserahkan (Stock)' }}</p>
-                                            </div>
-                                        </div>
-
-                                        <!-- Informasi Pembelian & Garansi -->
-                                        <div class="col-md-6">
-                                            <div class="p-3 bg-light rounded border">
-                                                <h6 class="fw-bold text-primary mb-3">🛒 Pembelian & Garansi</h6>
-                                                <p class="mb-2"><strong>Nomor PO:</strong> {{ asset.po_number or '-' }}</p>
-                                                <p class="mb-2"><strong>Tanggal Beli:</strong> {{ asset.purchase_date or '-' }}</p>
-                                                <p class="mb-0"><strong>Garansi Berakhir:</strong> {{ asset.warranty_expiry or '-' }}</p>
-                                            </div>
-                                        </div>
-
-                                        <!-- Spesifikasi Perangkat -->
-                                        <div class="col-md-12">
-                                            <div class="p-3 bg-light rounded border">
-                                                <h6 class="fw-bold text-primary mb-3">⚙️ Spesifikasi & Software</h6>
-                                                <div class="row">
-                                                    <div class="col-md-10"><p class="mb-2"><strong>Processor:</strong> {{ asset.processor or '-' }}</p></div>
-                                                    <div class="col-md-10"><p class="mb-2"><strong>RAM:</strong> {{ asset.ram or '-' }}</p></div>
-                                                    <div class="col-md-10"><p class="mb-2"><strong>Storage:</strong> {{ asset.storage or '-' }}</p></div>
-                                                    <div class="col-md-10"><p class="mb-2"><strong>Sistem Operasi (OS):</strong> {{ asset.os or '-' }}</p></div>
-                                                    <div class="col-md-10"><p class="mb-2"><strong>Microsoft Office:</strong> {{ asset.office or '-' }}</p></div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Catatan / Notes -->
-                                        <div class="col-md-12">
-                                            <div class="p-3 bg-light rounded border">
-                                                <h6 class="fw-bold text-primary mb-2">📝 Catatan Tambahan</h6>
-                                                <p class="mb-0 text-muted">{{ asset.notes or 'Tidak ada catatan.' }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <a href="{{ url_for('edit_asset', id=asset.id) }}" class="btn btn-warning btn-sm">Edit Aset Ini</a>
-                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">Belum ada data aset.</td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<!-- ========================================== -->
+<!-- SEMUA MODAL POP-UP DITARUH DI LUAR TABEL   -->
+<!-- ========================================== -->
+
+<!-- 1. MODAL DETAIL KATEGORI (RINGKASAN TOTAL) -->
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white py-3">
+                <h5 class="modal-title fw-bold">📊 Total Aset per Kategori</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for cat, count in category_counts.items() %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-4 py-3">
+                        <span class="fw-semibold text-secondary">💻 {{ cat }}</span>
+                        <span class="badge bg-primary rounded-pill fs-6">{{ count }} Unit</span>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-center text-muted py-3">Belum ada data aset</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="modal-footer py-2 bg-light">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. PERULANGAN MODAL DETAIL ASET PER ITEM (DILUAR TABEL) -->
+{% for asset in assets %}
+<div class="modal fade" id="detailModal{{ asset.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white py-3">
+                <h5 class="modal-title fw-bold">🖥️ Detail Aset: {{ asset.asset_tag }} - {{ asset.name }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-dark">
+                <div class="row g-3">
+                    <!-- Informasi Umum -->
+                    <div class="col-12 col-md-6">
+                        <div class="p-3 bg-light rounded border h-100">
+                            <h6 class="fw-bold text-primary mb-3 pb-2 border-bottom">📌 Informasi Umum</h6>
+                            <table class="table table-sm table-borderless mb-0">
+                                <tr><td class="text-muted" style="width: 40%;">Tag Aset</td><td class="fw-bold">: <span class="badge bg-dark">{{ asset.asset_tag }}</span></td></tr>
+                                <tr><td class="text-muted">Nama Perangkat</td><td class="fw-bold">: {{ asset.name }}</td></tr>
+                                <tr><td class="text-muted">Kategori</td><td>: <span class="badge bg-secondary">{{ asset.category }}</span></td></tr>
+                                <tr><td class="text-muted">Serial Number</td><td class="fw-bold text-danger">: <code>{{ asset.serial_number or '-' }}</code></td></tr>
+                                <tr><td class="text-muted">Pengguna</td><td class="fw-bold">: {{ asset.user_name or 'Stock' }}</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Pembelian & Garansi -->
+                    <div class="col-12 col-md-6">
+                        <div class="p-3 bg-light rounded border h-100">
+                            <h6 class="fw-bold text-primary mb-3 pb-2 border-bottom">🛒 Pembelian & Garansi</h6>
+                            <table class="table table-sm table-borderless mb-0">
+                                <tr><td class="text-muted" style="width: 45%;">Nomor PO</td><td class="fw-bold">: {{ asset.po_number or '-' }}</td></tr>
+                                <tr><td class="text-muted">Tanggal Beli</td><td class="fw-bold">: {{ asset.purchase_date or '-' }}</td></tr>
+                                <tr><td class="text-muted">Garansi Berakhir</td><td class="fw-bold text-danger">: {{ asset.warranty_expiry or '-' }}</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Spesifikasi -->
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded border">
+                            <h6 class="fw-bold text-primary mb-3 pb-2 border-bottom">⚙️ Spesifikasi & Software</h6>
+                            <div class="row g-2">
+                                <div class="col-12 col-sm-4"><div class="p-2 bg-white rounded border"><small class="text-muted d-block fw-semibold">Processor</small><span class="fw-bold text-dark">{{ asset.processor or '-' }}</span></div></div>
+                                <div class="col-12 col-sm-4"><div class="p-2 bg-white rounded border"><small class="text-muted d-block fw-semibold">RAM</small><span class="fw-bold text-dark">{{ asset.ram or '-' }}</span></div></div>
+                                <div class="col-12 col-sm-4"><div class="p-2 bg-white rounded border"><small class="text-muted d-block fw-semibold">Storage</small><span class="fw-bold text-dark">{{ asset.storage or '-' }}</span></div></div>
+                                <div class="col-12 col-sm-6 mt-2"><div class="p-2 bg-white rounded border"><small class="text-muted d-block fw-semibold">OS</small><span class="fw-bold text-dark">{{ asset.os or '-' }}</span></div></div>
+                                <div class="col-12 col-sm-6 mt-2"><div class="p-2 bg-white rounded border"><small class="text-muted d-block fw-semibold">Office</small><span class="fw-bold text-dark">{{ asset.office or '-' }}</span></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light py-2">
+                <a href="{{ url_for('edit_asset', id=asset.id) }}" class="btn btn-warning btn-sm fw-bold">✏️ Edit Aset</a>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- SCRIPT FILTER -->
+<script>
+function filterTable() {
+    let searchInput = document.getElementById("searchInput").value.toLowerCase();
+    let categoryFilter = document.getElementById("categoryFilter").value.toLowerCase();
+    let statusFilter = document.getElementById("statusFilter").value.toLowerCase();
+    let rows = document.querySelectorAll(".table tbody tr");
+
+    rows.forEach(row => {
+        if (row.cells.length < 5) return;
+        let tag = row.cells[0].textContent.toLowerCase();
+        let name = row.cells[1].textContent.toLowerCase();
+        let cat = row.cells[2].textContent.toLowerCase();
+        let status = row.cells[3].textContent.toLowerCase();
+        let user = row.cells[4].textContent.toLowerCase();
+
+        let matchSearch = tag.includes(searchInput) || name.includes(searchInput) || user.includes(searchInput);
+        let matchCat = categoryFilter === "" || cat.includes(categoryFilter);
+        let matchStatus = statusFilter === "" || status.includes(statusFilter);
+
+        row.style.display = (matchSearch && matchCat && matchStatus) ? "" : "none";
+    });
+}
+
+function resetFilters() {
+    document.getElementById("searchInput").value = "";
+    document.getElementById("categoryFilter").value = "";
+    document.getElementById("statusFilter").value = "";
+    filterTable();
+}
+</script>
 {% endblock %}
