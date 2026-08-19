@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card shadow-sm col-md-10 mx-auto">
+    <div class="card-header bg-primary text-white fw-bold fs-5">
+        📦 Pengadaan Batch / Barang Baru (Grosir)
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info py-2 small">
+            💡 Fitur ini akan otomatis membuat beberapa data aset sekaligus berdasarkan jumlah unit yang diinput.
+        </div>
+        <form action="/add-batch" method="POST">
+            
+            <!-- 1. Konfigurasi Penamaan Tag & Jumlah -->
+            <h6 class="fw-bold border-bottom pb-2 text-primary">Aturan Prefix & Jumlah Barang</h6>
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Prefix Asset Tag *</label>
+                    <input type="text" name="prefix" class="form-control" placeholder="Contoh: MNT, MNS, LPT" required>
+                    <div class="form-text">Akan menghasilkan Tag seperti: MNT-001, MNT-002, dst.</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Nomor Urut Awal *</label>
+                    <input type="number" name="start_number" class="form-control" value="1" min="1" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Jumlah Unit (Qty) *</label>
+                    <input type="number" name="quantity" class="form-control" value="5" min="1" max="50" required>
+                </div>
+            </div>
+
+            <!-- 2. Informasi Utama Perangkat -->
+            <h6 class="fw-bold border-bottom pb-2 mt-4 text-primary">Informasi Barang</h6>
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Nama Perangkat / Model *</label>
+                    <input type="text" name="name" class="form-control" placeholder="Contoh: Monitor Dell 24 Inch / Mouse Logitech B100" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Kategori *</label>
+                    <select name="category" class="form-select" required>
+                        <option value="Laptop">Laptop</option>
+                        <option value="Desktop PC">Desktop PC</option>
+                        <option value="Monitor">Monitor</option>
+                        <option value="Aksesoris (Mouse/Keyboard/Kabel)">Aksesoris (Mouse/Keyboard/Kabel)</option>
+                        <option value="Tablet">Tablet</option>
+                        <option value="Printer/Scanner">Printer/Scanner</option>
+                        <option value="Network Hardware">Network Hardware</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 3. Pengadaan & Garansi -->
+            <h6 class="fw-bold border-bottom pb-2 mt-4 text-primary">Pengadaan & Garansi</h6>
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Tanggal Pembelian</label>
+                    <input type="date" name="purchase_date" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">No. Purchase Order (PO)</label>
+                    <input type="text" name="po_number" class="form-control" placeholder="PO/2026/001">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Masa Garansi Berakhir</label>
+                    <input type="date" name="warranty_expiry" class="form-control">
+                </div>
+            </div>
+
+            <!-- 4. Spesifikasi Perangkat (Opsional jika berupa aksesoris) -->
+            <h6 class="fw-bold border-bottom pb-2 mt-4 text-primary">Spesifikasi Tambahan (Jika Ada)</h6>
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Processor</label>
+                    <input type="text" name="processor" class="form-control" placeholder="-">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">RAM</label>
+                    <select name="ram" class="form-select">
+                        <option value="-">-</option>
+                        <option value="4 GB">4 GB</option>
+                        <option value="8 GB">8 GB</option>
+                        <option value="16 GB">16 GB</option>
+                        <option value="32 GB">32 GB</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Penyimpanan (SSD/HDD)</label>
+                    <input type="text" name="storage" class="form-control" placeholder="-">
+                </div>
+            </div>
+
+            <!-- Catatan -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Catatan Pengadaan</label>
+                <textarea name="notes" class="form-control" rows="2" placeholder="Pembelian batch via vendor X"></textarea>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a href="/" class="btn btn-secondary">Batal</a>
+                <button type="submit" class="btn btn-success fw-bold">🚀 Proses & Generate Batch Aset</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

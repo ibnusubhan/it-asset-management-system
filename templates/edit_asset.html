@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card shadow-sm col-md-10 mx-auto">
+    <div class="card-header bg-white fw-bold fs-5">
+        Edit Data Aset ({{ asset.asset_tag }})
+    </div>
+    <div class="card-body">
+        <form action="/edit/{{ asset.id }}" method="POST">
+            <!-- 1. Informasi Utama -->
+            <h6 class="fw-bold border-bottom pb-2 text-primary">Informasi Utama</h6>
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Asset Tag *</label>
+                    <input type="text" name="asset_tag" class="form-control" value="{{ asset.asset_tag }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Nama Perangkat *</label>
+                    <input type="text" name="name" class="form-control" value="{{ asset.name }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Kategori *</label>
+                    <select name="category" class="form-select" required>
+                        <option value="Laptop" {% if asset.category == 'Laptop' %}selected{% endif %}>Laptop</option>
+                        <option value="Desktop PC" {% if asset.category == 'Desktop PC' %}selected{% endif %}>Desktop PC</option>
+                        <option value="Monitor" {% if asset.category == 'Monitor' %}selected{% endif %}>Monitor</option>
+                        <option value="Printer/Scanner" {% if asset.category == 'Printer/Scanner' %}selected{% endif %}>Printer/Scanner</option>
+                        <option value="Network Hardware" {% if asset.category == 'Network Hardware' %}selected{% endif %}>Network Hardware</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Serial Number</label>
+                    <input type="text" name="serial_number" class="form-control" value="{{ asset.serial_number or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Status *</label>
+                    <select name="status" class="form-select" required>
+                        <option value="Available" {% if asset.status == 'Available' %}selected{% endif %}>Available</option>
+                        <option value="In Use" {% if asset.status == 'In Use' %}selected{% endif %}>In Use</option>
+                        <option value="Repair" {% if asset.status == 'Repair' %}selected{% endif %}>Repair</option>
+                        <option value="Retired" {% if asset.status == 'Retired' %}selected{% endif %}>Retired</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Pengguna (Karyawan)</label>
+                    <select name="user_id" class="form-select">
+                        <option value="">-- Pilih Pengguna (Opsional) --</option>
+                        {% for emp in employees %}
+                        <option value="{{ emp.id }}" {% if asset.current_user_id == emp.id %}selected{% endif %}>
+                            {{ emp.full_name }} ({{ emp.department }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- 2. Informasi Pengadaan & Garansi -->
+            <h6 class="fw-bold border-bottom pb-2 mt-4 text-primary">Pengadaan & Garansi</h6>
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Tanggal Pembelian</label>
+                    <input type="date" name="purchase_date" class="form-control" value="{{ asset.purchase_date or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">No. Purchase Order (PO)</label>
+                    <input type="text" name="po_number" class="form-control" value="{{ asset.po_number or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Masa Garansi Berakhir</label>
+                    <input type="date" name="warranty_expiry" class="form-control" value="{{ asset.warranty_expiry or '' }}">
+                </div>
+            </div>
+
+            <!-- 3. Spesifikasi Perangkat -->
+            <h6 class="fw-bold border-bottom pb-2 mt-4 text-primary">Spesifikasi Perangkat</h6>
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Processor</label>
+                    <input type="text" name="processor" class="form-control" value="{{ asset.processor or '' }}" placeholder="e.g. Intel Core i5">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">RAM</label>
+                    <select name="ram" class="form-select">
+                        <option value="-" {% if asset.ram == '-' %}selected{% endif %}>-</option>
+                        <option value="4 GB" {% if asset.ram == '4 GB' %}selected{% endif %}>4 GB</option>
+                        <option value="8 GB" {% if asset.ram == '8 GB' %}selected{% endif %}>8 GB</option>
+                        <option value="16 GB" {% if asset.ram == '16 GB' %}selected{% endif %}>16 GB</option>
+                        <option value="32 GB" {% if asset.ram == '32 GB' %}selected{% endif %}>32 GB</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Penyimpanan (SSD/HDD)</label>
+                    <input type="text" name="storage" class="form-control" value="{{ asset.storage or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Sistem Operasi (OS)</label>
+                    <select name="os" class="form-select">
+                        <option value="-" {% if asset.os == '-' %}selected{% endif %}>-</option>
+                        <option value="Windows 10" {% if asset.os == 'Windows 10' %}selected{% endif %}>Windows 10</option>
+                        <option value="Windows 11" {% if asset.os == 'Windows 11' %}selected{% endif %}>Windows 11</option>
+                        <option value="macOS" {% if asset.os == 'macOS' %}selected{% endif %}>macOS</option>
+                        <option value="Linux" {% if asset.os == 'Linux' %}selected{% endif %}>Linux</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Microsoft Office</label>
+                    <input type="text" name="office" class="form-control" value="{{ asset.office or '' }}">
+                </div>
+            </div>
+
+            <!-- Catatan -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Catatan</label>
+                <textarea name="notes" class="form-control" rows="3">{{ asset.notes or '' }}</textarea>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a href="/" class="btn btn-secondary">Batal</a>
+                <button type="submit" class="btn btn-warning">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0">Dashboard Aset IT</h2>
+        {% if selected_status %}
+            <small class="text-muted">Menampilkan filter: <strong>{{ selected_status }}</strong> (<a href="/" class="text-decoration-none">Reset Filter</a>)</small>
+        {% endif %}
+    </div>
+    <div>
+        <a href="/export/excel" class="btn btn-success btn-sm me-2">📊 Ekspor Excel</a>
+        <a href="/add" class="btn btn-primary btn-sm">+ Tambah Aset</a>
+    </div>
+</div>
+
+<!-- Kartu Ringkasan Interaktif (Dapat Diklik) -->
+<div class="row mb-4">
+    <!-- Kartu Total Aset -->
+  <!-- Card Total Aset dengan Link Detail Kategori -->
+<div class="col-md-3">
+    <div class="card bg-primary text-white shadow-sm position-relative">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="card-title mb-1 text-white-50">Total Aset</h6>
+                    <h2 class="fw-bold mb-0">{{ total }}</h2>
+                </div>
+                <div class="fs-1 opacity-25">📦</div>
+            </div>
+            <hr class="my-2 opacity-25">
+            <!-- TULISAN KECIL UNTUK KLIK DETAIL -->
+            <a href="#" class="text-white text-decoration-none small fw-semibold" data-bs-toggle="modal" data-bs-target="#categoryModal">
+                🔍 Lihat Detail Per Kategori &raquo;
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- POP-UP DIALOG DETAIL PER KATEGORI -->
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-dark">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="categoryModalLabel">📊 Rincian Total Aset per Kategori</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group list-group-flush">
+                    {% for cat, count in category_counts.items() %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-2 py-2">
+                        <span class="fw-semibold text-secondary">💻 {{ cat }}</span>
+                        <span class="badge bg-primary rounded-pill fs-6">{{ count }} Unit</span>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-center text-muted">Belum ada data aset</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="modal-footer py-2">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    <!-- Kartu In Use -->
+    <div class="col-md-3">
+        <a href="/?status=In Use" class="text-decoration-none">
+            <div class="card bg-success text-white p-3 shadow-sm card-hover {% if selected_status == 'In Use' %}border border-3 border-dark{% endif %}" style="cursor: pointer;">
+                <h6>In Use</h6>
+                <h3 class="mb-0">{{ in_use }}</h3>
+            </div>
+        </a>
+    </div>
+
+    <!-- Kartu Available -->
+    <div class="col-md-3">
+        <a href="/?status=Available" class="text-decoration-none">
+            <div class="card bg-info text-white p-3 shadow-sm card-hover {% if selected_status == 'Available' %}border border-3 border-dark{% endif %}" style="cursor: pointer;">
+                <h6>Available</h6>
+                <h3 class="mb-0">{{ available }}</h3>
+            </div>
+        </a>
+    </div>
+
+    <!-- Kartu Repair -->
+    <div class="col-md-3">
+        <a href="/?status=Repair" class="text-decoration-none">
+            <div class="card bg-warning text-dark p-3 shadow-sm card-hover {% if selected_status == 'Repair' %}border border-3 border-dark{% endif %}" style="cursor: pointer;">
+                <h6>Repair</h6>
+                <h3 class="mb-0">{{ repair }}</h3>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Tabel Inventaris -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+        <span>Daftar Aset {% if selected_status %}(Filter: {{ selected_status }}){% endif %}</span>
+        {% if selected_status %}
+            <a href="/" class="btn btn-outline-secondary btn-sm">Tampilkan Semua</a>
+        {% endif %}
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Tag Aset</th>
+                    <th>Nama</th>
+                    <th>Kategori</th>
+                    <th>Status</th>
+                    <th>Pengguna</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for asset in assets %}
+                <tr>
+                    <td><strong>{{ asset.asset_tag }}</strong></td>
+                    <td>{{ asset.name }}</td>
+                    <td><span class="badge bg-secondary">{{ asset.category }}</span></td>
+                    <td>
+                        {% if asset.status == 'In Use' %}
+                            <span class="badge bg-success">In Use</span>
+                        {% elif asset.status == 'Available' %}
+                            <span class="badge bg-info">Available</span>
+                        {% elif asset.status == 'Repair' %}
+                            <span class="badge bg-warning text-dark">Repair</span>
+                        {% else %}
+                            <span class="badge bg-danger">Retired</span>
+                        {% endif %}
+                    </td>
+                    
+                    <td>{{ asset.user_name or '-' }}</td>
+                 <td class="text-nowrap">
+    <a href="/asset/{{ asset.id }}" class="btn btn-info btn-sm text-white">QR Code</a>
+    <a href="/edit/{{ asset.id }}" class="btn btn-warning btn-sm">Edit</a>
+    <a href="/delete/{{ asset.id }}" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus aset ini?')">Hapus</a>
+</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">
+                        Belum ada data aset {% if selected_status %}dengan status "{{ selected_status }}"{% endif %}.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
