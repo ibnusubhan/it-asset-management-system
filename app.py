@@ -1,7 +1,7 @@
 import io
 import base64
 import sqlite3
-from datetime import timedelta
+from datetime import datetime, timedelta
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -44,6 +44,36 @@ def load_user(user_id):
         return User(user_data['id'], user_data['username'], user_data['password'])
     return None
 
+# ==========================================
+# FUNGSI GENERATE NIP OTOMATIS (9 DIGIT)
+# ==========================================
+def generate_nip_auto(birth_date_str):
+    """
+    Input birth_date_str format 'YYYY-MM-DD' (contoh: '1999-08-05')
+    Format Output: '00' + '99' + '08' + '001' = '009908001' (Total 9 Digit)
+    """
+    birth_dt = datetime.strptime(birth_date_str, '%Y-%m-%d')
+    year_short = birth_dt.strftime('%y')   # 2 digit tahun -> '99'
+    month_str = birth_dt.strftime('%m')    # 2 digit bulan -> '08'
+    
+    # Prefix awal: '00' + '99' + '08' = '009908'
+    prefix = f"00{year_short}{month_str}"
+    
+    conn = get_db_connection()
+    # Hitung data karyawan di DB yang punya prefix tahun & bulan sama pada emp_code
+    count_row = conn.execute(
+        'SELECT COUNT(*) as count FROM employees WHERE emp_code LIKE ?', 
+        (f"{prefix}%",)
+    ).fetchone()
+    conn.close()
+    
+    count = count_row['count'] if count_row else 0
+    
+    # Nomor urut 3 digit: 001, 002, ..., 100
+    sequence = str(count + 1).zfill(3)
+    
+    return f"{prefix}{sequence}"
+
 def init_db():
     conn = get_db_connection()
     conn.execute('''
@@ -80,9 +110,17 @@ def init_db():
             emp_code TEXT UNIQUE NOT NULL,
             full_name TEXT NOT NULL,
             department TEXT NOT NULL,
-            email TEXT
+            email TEXT,
+            birth_date DATE
         )
     ''')
+    
+    # Auto-migration: Tambah kolom birth_date jika belum ada di tabel employees
+    try:
+        conn.execute('ALTER TABLE employees ADD COLUMN birth_date DATE')
+    except sqlite3.OperationalError:
+        pass  # Kolom sudah ada
+
     conn.execute('''
         CREATE TABLE IF NOT EXISTS asset_logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -138,7 +176,6 @@ def logout():
 
 # ---------------- ROUTE UTAMA & ASET ----------------
 
-# Route Dashboard Utama
 @app.route('/')
 @login_required
 def index():
@@ -156,7 +193,6 @@ def index():
     available = len([a for a in all_assets if a['status'] == 'Available'])
     repair = len([a for a in all_assets if a['status'] == 'Repair'])
     
-    # --- TAMBAHAN BARU: Hitung rincian per kategori ---
     category_counts = {}
     for asset in all_assets:
         cat = asset['category'] or 'Lainnya'
@@ -320,21 +356,27 @@ def edit_asset(id):
     conn.close()
     return render_template('edit_asset.html', asset=asset, employees=employees)
 
+# ---------------- ROUTE KARYAWAN ----------------
+
 @app.route('/employees', methods=['GET', 'POST'])
 @login_required
 def employees():
     conn = get_db_connection()
     if request.method == 'POST':
-        emp_code = request.form['emp_code']
         full_name = request.form['full_name']
         department = request.form['department']
         email = request.form['email']
+        birth_date = request.form['birth_date']  # Format: YYYY-MM-DD
+
+        # Generate NIP otomatis 9 digit berdasarkan Tanggal Lahir
+        auto_emp_code = generate_nip_auto(birth_date)
 
         conn.execute('''
-            INSERT INTO employees (emp_code, full_name, department, email)
-            VALUES (?, ?, ?, ?)
-        ''', (emp_code, full_name, department, email))
+            INSERT INTO employees (emp_code, full_name, department, email, birth_date)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (auto_emp_code, full_name, department, email, birth_date))
         conn.commit()
+        conn.close()
         return redirect(url_for('employees'))
 
     employees_list = conn.execute('SELECT * FROM employees').fetchall()

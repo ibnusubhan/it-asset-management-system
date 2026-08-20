@@ -8,16 +8,18 @@
             <div class="card-body">
                 <form action="/employees" method="POST">
                     <div class="mb-3">
-                        <label class="form-label">ID Karyawan (NIP) *</label>
-                        <input type="text" name="emp_code" class="form-control" placeholder="EMP-01" required>
-                    </div>
-                    <div class="mb-3">
                         <label class="form-label">Nama Lengkap *</label>
                         <input type="text" name="full_name" class="form-control" placeholder="Budi Santoso" required>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">Tanggal Lahir *</label>
+                        <input type="date" name="birth_date" class="form-control" required>
+                        <div class="form-text text-muted">NIP 9 digit akan ter-generate otomatis dari tanggal lahir.</div>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Departemen / Divisi *</label>
                         <select name="department" class="form-select" required>
+                            <option value="Manager">Manager</option>
                             <option value="IT">IT</option>
                             <option value="HR">HRD</option>
                             <option value="Finance">Accounting</option>
@@ -31,7 +33,11 @@
                             <option value="CSKD">CSKD</option>
                             <option value="XRF">XRF</option>
                             <option value="DMS">DMS</option>
-                            <option value="Warehouse">Exim</option>
+                            <option value="Warehouse">Warehouse</option>
+                            <option value="Assembly">Assembly</option>
+                            <option value="Molding">Molding</option>
+                            <option value="Resin">Resin</option>
+                            <option value="FinishGood">FinishGood</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -49,9 +55,10 @@
             <div class="card-header bg-white fw-bold">Daftar Karyawan</div>
             <div class="card-body p-0">
                 <table class="table table-hover align-middle mb-0">
+                    <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>NIP</th>
+                            <th>NIP (Auto)</th>
                             <th>Nama</th>
                             <th>Departemen</th>
                             <th>Email</th>
